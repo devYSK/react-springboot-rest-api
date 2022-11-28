@@ -24,7 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserControllerV1.class)
-class UserControllerSliceV1Test {
+class UserControllerV1SliceTest {
 
     @Autowired
     private MockMvc mockmvc;
@@ -56,10 +56,9 @@ class UserControllerSliceV1Test {
             .andExpect(jsonPath("$.email").value(email))
             .andExpect(jsonPath("$.name").value(name))
             .andDo(print());
-
     }
 
-    @DisplayName("post /api/v1/users - 400 - 이메일이 중복되어 유저 생성에 실패한다.")
+    @DisplayName("post /api/v1/users - 409 - 이메일이 중복되어 유저 생성에 실패한다.")
     @Test
     void createFail400DuplicateEmail() throws Exception {
         //given
@@ -74,7 +73,7 @@ class UserControllerSliceV1Test {
         mockmvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
-            ).andExpect(status().isBadRequest())
+            ).andExpect(status().isConflict())
             .andDo(print());
     }
 
@@ -100,8 +99,6 @@ class UserControllerSliceV1Test {
     void findFail404() throws Exception {
         //given
         int size = 10;
-        List<UserResponse> userResponse = createUserResponse(size);
-
         given(userService.findAllUsers())
             .willThrow(EntityNotFoundException.class);
 

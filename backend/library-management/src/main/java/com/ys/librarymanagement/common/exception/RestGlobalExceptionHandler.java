@@ -40,18 +40,18 @@ public class RestGlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DuplicateEmailException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> duplicateEmailHandle(DuplicateEmailException e,
+    @ExceptionHandler(DuplicateException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ErrorResponse> duplicateEmailHandle(DuplicateException e,
         HttpServletRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
             .timeStamp(LocalDateTime.now())
-            .status(HttpStatus.BAD_REQUEST.value())
+            .status(HttpStatus.CONFLICT.value())
             .message(e.getMessage())
             .requestUrl(request.getRequestURI())
             .build();
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 }

@@ -3,10 +3,13 @@ package com.ys.librarymanagement.book.domain;
 import com.ys.librarymanagement.common.base.AbstractTimeColumn;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
@@ -14,6 +17,7 @@ import org.springframework.util.StringUtils;
 @Entity
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class Book extends AbstractTimeColumn {
 
     @Id
@@ -23,9 +27,11 @@ public class Book extends AbstractTimeColumn {
     @Column(nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BookType bookType;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BookStatus bookStatus = BookStatus.RENTAL_AVAILABLE;
 
