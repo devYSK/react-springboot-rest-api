@@ -13,6 +13,6 @@ public class UserCreateResponse {
 
     private final String email;
 
-    private final String userName;
+    private final String name;
 
 }
