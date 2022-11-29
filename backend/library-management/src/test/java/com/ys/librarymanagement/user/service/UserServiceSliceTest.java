@@ -6,10 +6,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 
-import com.ys.librarymanagement.user.api.UserCreateRequest;
-import com.ys.librarymanagement.user.domain.User;
-import com.ys.librarymanagement.user.exception.DuplicateEmailException;
-import com.ys.librarymanagement.user.repository.UserRepository;
+import com.ys.librarymanagement.domain.user.api.request.UserCreateRequest;
+import com.ys.librarymanagement.domain.user.domain.User;
+import com.ys.librarymanagement.domain.user.exception.DuplicateEmailException;
+import com.ys.librarymanagement.domain.user.repository.UserRepository;
+import com.ys.librarymanagement.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

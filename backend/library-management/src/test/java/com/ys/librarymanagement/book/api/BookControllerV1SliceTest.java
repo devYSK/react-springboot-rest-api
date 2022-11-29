@@ -8,11 +8,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ys.librarymanagement.book.domain.Book;
-import com.ys.librarymanagement.book.domain.BookStatus;
-import com.ys.librarymanagement.book.domain.BookType;
-import com.ys.librarymanagement.book.exception.DuplicateBookException;
-import com.ys.librarymanagement.book.service.BookService;
+import com.ys.librarymanagement.domain.book.api.BookControllerV1;
+import com.ys.librarymanagement.domain.book.api.request.BookCreateRequest;
+import com.ys.librarymanagement.domain.book.api.response.BookCreateResponse;
+import com.ys.librarymanagement.domain.book.api.response.BookResponse;
+import com.ys.librarymanagement.domain.book.domain.Book;
+import com.ys.librarymanagement.domain.book.domain.BookStatus;
+import com.ys.librarymanagement.domain.book.domain.BookType;
+import com.ys.librarymanagement.domain.book.exception.DuplicateBookException;
+import com.ys.librarymanagement.domain.book.service.BookService;
 import com.ys.librarymanagement.common.exception.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;

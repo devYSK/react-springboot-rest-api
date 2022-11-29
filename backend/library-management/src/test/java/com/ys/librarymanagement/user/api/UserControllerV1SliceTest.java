@@ -9,9 +9,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ys.librarymanagement.common.exception.EntityNotFoundException;
-import com.ys.librarymanagement.user.domain.User;
-import com.ys.librarymanagement.user.exception.DuplicateEmailException;
-import com.ys.librarymanagement.user.service.UserService;
+import com.ys.librarymanagement.domain.user.api.UserControllerV1;
+import com.ys.librarymanagement.domain.user.api.request.UserCreateRequest;
+import com.ys.librarymanagement.domain.user.api.response.UserCreateResponse;
+import com.ys.librarymanagement.domain.user.api.response.UserResponse;
+import com.ys.librarymanagement.domain.user.domain.User;
+import com.ys.librarymanagement.domain.user.exception.DuplicateEmailException;
+import com.ys.librarymanagement.domain.user.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

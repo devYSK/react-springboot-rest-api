@@ -1,7 +1,6 @@
 package com.ys.librarymanagement.common.exception;
 
 import com.ys.librarymanagement.common.response.ErrorResponse;
-import com.ys.librarymanagement.user.exception.DuplicateEmailException;
 import java.time.LocalDateTime;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
