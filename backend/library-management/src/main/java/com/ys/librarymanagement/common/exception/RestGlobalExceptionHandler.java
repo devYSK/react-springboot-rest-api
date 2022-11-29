@@ -1,6 +1,7 @@
 package com.ys.librarymanagement.common.exception;
 
 import com.ys.librarymanagement.common.response.ErrorResponse;
+import com.ys.librarymanagement.domain.book.exception.AlreadyRentedBookException;
 import java.time.LocalDateTime;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -53,4 +54,21 @@ public class RestGlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(AlreadyRentedBookException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> rentalDeniedHandle(
+        AlreadyRentedBookException e,
+        HttpServletRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .timeStamp(LocalDateTime.now())
+            .status(HttpStatus.BAD_REQUEST.value())
+            .message(e.getMessage())
+            .requestUrl(request.getRequestURI())
+            .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
 }

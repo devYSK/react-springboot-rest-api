@@ -111,7 +111,6 @@ class UserControllerV1SliceTest {
             .andExpect(status().isNotFound());
     }
 
-
     private List<UserResponse> createUserResponses(int size) {
         String email = "userEmail@naver.com";
         String name = "username";

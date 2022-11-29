@@ -1,7 +1,10 @@
 package com.ys.librarymanagement.book.api;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -10,11 +13,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ys.librarymanagement.domain.book.api.BookControllerV1;
 import com.ys.librarymanagement.domain.book.api.request.BookCreateRequest;
+import com.ys.librarymanagement.domain.book.api.request.BookRentalRequest;
 import com.ys.librarymanagement.domain.book.api.response.BookCreateResponse;
+import com.ys.librarymanagement.domain.book.api.response.BookRentalResponse;
 import com.ys.librarymanagement.domain.book.api.response.BookResponse;
 import com.ys.librarymanagement.domain.book.domain.Book;
 import com.ys.librarymanagement.domain.book.domain.BookStatus;
 import com.ys.librarymanagement.domain.book.domain.BookType;
+import com.ys.librarymanagement.domain.book.exception.AlreadyRentedBookException;
 import com.ys.librarymanagement.domain.book.exception.DuplicateBookException;
 import com.ys.librarymanagement.domain.book.service.BookService;
 import com.ys.librarymanagement.common.exception.EntityNotFoundException;
@@ -65,6 +71,8 @@ class BookControllerV1SliceTest {
             .andExpect(jsonPath("$.bookType").value(bookType.name()))
             .andExpect(jsonPath("$.bookStatus").value(BookStatus.RENTAL_AVAILABLE.name()))
             .andDo(print());
+
+        verify(bookService).createBookAndGetResponse(request);
     }
 
     @DisplayName("post /api/v1/posts - 409 - 책이 이미 등록되어있으므로 생성에 실패한다")
@@ -85,6 +93,8 @@ class BookControllerV1SliceTest {
             )
             .andExpect(status().isConflict())
             .andDo(print());
+
+        verify(bookService).createBookAndGetResponse(request);
     }
 
 
@@ -104,6 +114,8 @@ class BookControllerV1SliceTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(size));
+
+        verify(bookService).findAllBooks();
     }
 
     @DisplayName("get /api/v1/books - 404 - 저장된 책이 없으므로 notfound 응답을 보내준다")
@@ -117,6 +129,74 @@ class BookControllerV1SliceTest {
         mockMvc.perform(get("/api/v1/books")
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
+
+        verify(bookService).findAllBooks();
+    }
+    
+    @DisplayName("patch /api/v1/books/{bookId} - 200 - 책 대여에 성공한다.")
+    @Test
+    void toRentalBookSuccess200() throws Exception {
+        //given
+        Long bookId = 0L;
+        Long userId = 0L;
+        Long bookRentalId = 0L;
+        BookRentalRequest bookRentalRequest = new BookRentalRequest(userId);
+        BookRentalResponse bookRentalResponse = new BookRentalResponse(bookRentalId);
+
+        given(bookService.rentalBook(bookId, userId))
+            .willReturn(bookRentalResponse);
+
+        //when & then
+        mockMvc.perform(patch("/api/v1/books/{bookId}/rental", bookId)
+                .content(objectMapper.writeValueAsBytes(bookRentalRequest))
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.bookRentalHistoryId").value(bookRentalId))
+            .andDo(print());
+
+        verify(bookService).rentalBook(bookId, userId);
+    }
+
+    @DisplayName("patch /api/v1/books/{bookId} - 404 - 유저나 책이 없으므로 책 대여에 실패한다.")
+    @Test
+    void toRentalBookSuccess404UserAndBookNotFound() throws Exception {
+        //given
+        Long bookId = 0L;
+        Long userId = 0L;
+        BookRentalRequest bookRentalRequest = new BookRentalRequest(userId);
+
+        given(bookService.rentalBook(bookId, userId))
+            .willThrow(EntityNotFoundException.class);
+
+        //when & then
+        mockMvc.perform(patch("/api/v1/books/{bookId}/rental", bookId)
+                .content(objectMapper.writeValueAsBytes(bookRentalRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andDo(print());
+
+        verify(bookService).rentalBook(bookId, userId);
+    }
+
+    @DisplayName("patch /api/v1/books/{bookId} - 400 - 이미 대여된 책이므로 책 대여에 실패한다.")
+    @Test
+    void toRentalBookSuccess400AlreadyRented() throws Exception {
+        //given
+        Long bookId = 0L;
+        Long userId = 0L;
+        BookRentalRequest bookRentalRequest = new BookRentalRequest(userId);
+
+        given(bookService.rentalBook(bookId, userId))
+            .willThrow(AlreadyRentedBookException.class);
+
+        //when & then
+        mockMvc.perform(patch("/api/v1/books/{bookId}/rental", bookId)
+                .content(objectMapper.writeValueAsBytes(bookRentalRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andDo(print());
+
+        verify(bookService).rentalBook(bookId, userId);
     }
 
     private List<BookResponse> createBookResponses(int size) {
