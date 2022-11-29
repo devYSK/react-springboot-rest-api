@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.ys.librarymanagement.domain.book.domain.Book;
 import com.ys.librarymanagement.domain.book.domain.BookStatus;
 import com.ys.librarymanagement.domain.book.domain.BookType;
+import com.ys.librarymanagement.domain.book.exception.AlreadyRentedBookException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,7 +47,7 @@ class BookTest {
     @Test
     void createDefaultBookStatusRENTAL_AVAILABLE() {
         //given
-        String bookName = "123";
+        String bookName = "bookName";
         BookType bookType = BookType.COMPUTER;
 
         //when & then
@@ -60,7 +61,7 @@ class BookTest {
     @Test
     void toRental() {
         //given
-        String bookName = "123";
+        String bookName = "bookName";
         BookType bookType = BookType.COMPUTER;
 
         Book book = Book.create(bookName, bookType);
@@ -78,9 +79,9 @@ class BookTest {
 
     @DisplayName("toRental 테스트 - toReturn 을 호출하면 Status가 RENTAL_AVAILABLE 로 바뀐다.")
     @Test
-    void toReturn() {
+    void toReturnSuccess() {
         //given
-        String bookName = "123";
+        String bookName = "bookName";
         BookType bookType = BookType.COMPUTER;
 
         Book book = Book.create(bookName, bookType);
@@ -94,6 +95,20 @@ class BookTest {
         BookStatus afterCallStatus = book.getBookStatus();
         assertNotEquals(beforeCallStatus, afterCallStatus);
         assertEquals(BookStatus.RENTAL_AVAILABLE, afterCallStatus);
+    }
+
+    @DisplayName("toRental 테스트 - toReturn 을 호출했을 때 Status가 RENTED 이면 예외를 던진다.")
+    @Test
+    void toReturnFailThrowException() {
+        //given
+        String bookName = "bookName";
+        BookType bookType = BookType.COMPUTER;
+
+        Book book = Book.create(bookName, bookType);
+
+        book.toRental();
+        //when & then
+        assertThrows(AlreadyRentedBookException.class, book::toRental);
     }
 
 }

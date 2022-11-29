@@ -1,6 +1,7 @@
 package com.ys.librarymanagement.domain.book.domain;
 
 import com.ys.librarymanagement.common.base.AbstractTimeColumn;
+import com.ys.librarymanagement.domain.book.exception.AlreadyRentedBookException;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,8 +18,8 @@ import org.springframework.util.StringUtils;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(callSuper = true)
 public class Book extends AbstractTimeColumn {
 
     @Id
@@ -51,6 +53,10 @@ public class Book extends AbstractTimeColumn {
     }
 
     public void toRental() {
+        if (this.bookStatus == BookStatus.RENTED) {
+            throw new AlreadyRentedBookException("이미 대여된 책입니다.");
+        }
+
         bookStatus = BookStatus.RENTED;
     }
 
