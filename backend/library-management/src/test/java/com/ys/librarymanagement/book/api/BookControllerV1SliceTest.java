@@ -97,7 +97,7 @@ class BookControllerV1SliceTest {
 
         //when & then
         mockMvc.perform(get("/api/v1/books")
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(size));
     }
@@ -111,7 +111,7 @@ class BookControllerV1SliceTest {
 
         //when & then
         mockMvc.perform(get("/api/v1/books")
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
 
