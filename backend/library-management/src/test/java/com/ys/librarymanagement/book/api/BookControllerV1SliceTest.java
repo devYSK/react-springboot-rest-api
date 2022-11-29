@@ -1,17 +1,23 @@
 package com.ys.librarymanagement.book.api;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ys.librarymanagement.book.domain.Book;
 import com.ys.librarymanagement.book.domain.BookStatus;
 import com.ys.librarymanagement.book.domain.BookType;
 import com.ys.librarymanagement.book.exception.DuplicateBookException;
 import com.ys.librarymanagement.book.service.BookService;
 import com.ys.librarymanagement.common.exception.DuplicateException;
+import com.ys.librarymanagement.common.exception.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,4 +84,47 @@ class BookControllerV1SliceTest {
             .andDo(print());
     }
 
+
+    @DisplayName("get /api/v1/books - 200 - 저장된 모든 책을 조회한다")
+    @Test
+    void findAllSuccess200() throws Exception {
+        //given
+        int size = 10;
+
+        List<BookResponse> bookResponses = createBookResponses(size);
+
+        given(bookService.findAllBooks())
+            .willReturn(bookResponses);
+
+        //when & then
+        mockMvc.perform(get("/api/v1/books")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(size));
+    }
+
+    @DisplayName("get /api/v1/books - 404 - 저장된 책이 없으므로 notfound 응답을 보내준다")
+    @Test
+    void findAllFail404() throws Exception {
+        //given
+        given(bookService.findAllBooks())
+            .willThrow(EntityNotFoundException.class);
+
+        //when & then
+        mockMvc.perform(get("/api/v1/books")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
+
+    private List<BookResponse> createBookResponses(int size) {
+        String bookName = "bookName";
+        BookType bookType = BookType.COMPUTER;
+
+        return IntStream.range(0, size)
+            .mapToObj(value -> {
+                Book book = new Book(bookName + value, bookType);
+
+                return BookResponse.of(book);
+            }).collect(Collectors.toList());
+    }
 }

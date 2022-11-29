@@ -2,9 +2,12 @@ package com.ys.librarymanagement.book.service;
 
 import com.ys.librarymanagement.book.api.BookCreateRequest;
 import com.ys.librarymanagement.book.api.BookCreateResponse;
+import com.ys.librarymanagement.book.api.BookResponse;
 import com.ys.librarymanagement.book.domain.Book;
 import com.ys.librarymanagement.book.exception.DuplicateBookException;
 import com.ys.librarymanagement.book.repository.BookRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +32,13 @@ public class BookService {
     public BookCreateResponse createBookAndGetResponse(BookCreateRequest request) {
         Book book = createBook(request);
 
-        return new BookCreateResponse(book.getId(), book.getName(), book.getBookType(), book.getBookStatus());
+        return new BookCreateResponse(book.getId(), book.getName(), book.getBookType(),
+            book.getBookStatus());
     }
 
+    @Transactional
+    public List<BookResponse> findAllBooks() {
+        return bookRepository.findAll().stream().map(BookResponse::of)
+            .collect(Collectors.toList());
+    }
 }
