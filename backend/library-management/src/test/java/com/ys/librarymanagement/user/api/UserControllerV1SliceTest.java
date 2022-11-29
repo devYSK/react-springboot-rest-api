@@ -82,7 +82,7 @@ class UserControllerV1SliceTest {
     void findSuccess200() throws Exception {
         //given
         int size = 10;
-        List<UserResponse> userResponse = createUserResponse(size);
+        List<UserResponse> userResponse = createUserResponses(size);
 
         given(userService.findAllUsers())
             .willReturn(userResponse);
@@ -98,7 +98,6 @@ class UserControllerV1SliceTest {
     @Test
     void findFail404() throws Exception {
         //given
-        int size = 10;
         given(userService.findAllUsers())
             .willThrow(EntityNotFoundException.class);
 
@@ -109,7 +108,7 @@ class UserControllerV1SliceTest {
     }
 
 
-    private List<UserResponse> createUserResponse(int size) {
+    private List<UserResponse> createUserResponses(int size) {
         String email = "userEmail@naver.com";
         String name = "username";
 
