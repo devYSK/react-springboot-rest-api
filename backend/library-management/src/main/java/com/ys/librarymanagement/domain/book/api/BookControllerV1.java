@@ -44,4 +44,15 @@ public class BookControllerV1 {
         return ResponseEntity.ok(bookService.rentalBook(bookId, request.getUserId()));
     }
 
+    @PatchMapping("/{bookId}/return")
+    public ResponseEntity<BookRentalResponse> toReturnBook(
+        @PathVariable Long bookId,
+        @RequestBody BookRentalRequest request) {
+
+        bookService.returnBook(bookId, request.getUserId());
+
+        return ResponseEntity.ok().build();
+    }
+
+
 }

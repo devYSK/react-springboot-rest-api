@@ -4,6 +4,8 @@ import com.ys.librarymanagement.common.base.AbstractTimeColumn;
 import com.ys.librarymanagement.domain.book.domain.Book;
 import com.ys.librarymanagement.domain.user.domain.User;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,7 +21,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BookRentalHistory extends AbstractTimeColumn {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,13 +33,17 @@ public class BookRentalHistory extends AbstractTimeColumn {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    protected BookRentalHistory(User user, Book book) {
+    @Enumerated(EnumType.STRING)
+    private RentalStatus rentalStatus;
+
+    protected BookRentalHistory(User user, Book book, RentalStatus rentalStatus) {
         this.user = user;
         this.book = book;
+        this.rentalStatus = rentalStatus;
     }
 
-    public static BookRentalHistory create(User user, Book book) {
-            return new BookRentalHistory(user, book);
+    public static BookRentalHistory create(User user, Book book, RentalStatus rentalStatus) {
+        return new BookRentalHistory(user, book, rentalStatus);
     }
 
 }

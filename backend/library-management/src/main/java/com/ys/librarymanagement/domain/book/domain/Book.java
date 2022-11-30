@@ -52,6 +52,10 @@ public class Book extends AbstractTimeColumn {
             .build();
     }
 
+    public boolean isRented() {
+        return this.bookStatus == BookStatus.RENTED;
+    }
+
     public void toRental() {
         if (this.bookStatus == BookStatus.RENTED) {
             throw new AlreadyRentedBookException("이미 대여된 책입니다.");
