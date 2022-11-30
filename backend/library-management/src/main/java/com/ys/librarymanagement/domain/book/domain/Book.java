@@ -14,7 +14,9 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Entity
 @Getter
@@ -65,6 +67,9 @@ public class Book extends AbstractTimeColumn {
     }
 
     public void toReturn() {
+        if (!this.isRented()) {
+            throw new IllegalStateException("대여되지 않은 책입니다.");
+        }
         bookStatus = BookStatus.RENTAL_AVAILABLE;
     }
 

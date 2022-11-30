@@ -2,6 +2,7 @@ package com.ys.librarymanagement.domain.book.api;
 
 import com.ys.librarymanagement.domain.book.api.request.BookCreateRequest;
 import com.ys.librarymanagement.domain.book.api.request.BookRentalRequest;
+import com.ys.librarymanagement.domain.book.api.request.BookReturnRequest;
 import com.ys.librarymanagement.domain.book.api.response.BookCreateResponse;
 import com.ys.librarymanagement.domain.book.api.response.BookRentalResponse;
 import com.ys.librarymanagement.domain.book.api.response.BookResponse;
@@ -47,12 +48,11 @@ public class BookControllerV1 {
     @PatchMapping("/{bookId}/return")
     public ResponseEntity<BookRentalResponse> toReturnBook(
         @PathVariable Long bookId,
-        @RequestBody BookRentalRequest request) {
+        @RequestBody BookReturnRequest request) {
 
         bookService.returnBook(bookId, request.getUserId());
 
         return ResponseEntity.ok().build();
     }
-
 
 }

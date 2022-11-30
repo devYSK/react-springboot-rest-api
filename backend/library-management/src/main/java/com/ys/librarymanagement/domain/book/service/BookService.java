@@ -2,6 +2,7 @@ package com.ys.librarymanagement.domain.book.service;
 
 import com.ys.librarymanagement.common.exception.EntityNotFoundException;
 import com.ys.librarymanagement.domain.book.api.request.BookCreateRequest;
+import com.ys.librarymanagement.domain.book.api.request.NotUserRentedBookException;
 import com.ys.librarymanagement.domain.book.api.response.BookCreateResponse;
 import com.ys.librarymanagement.domain.book.api.response.BookRentalResponse;
 import com.ys.librarymanagement.domain.book.api.response.BookResponse;
@@ -19,10 +20,8 @@ import com.ys.librarymanagement.domain.user_rental_list.UserRentalRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @RequiredArgsConstructor
@@ -88,18 +87,15 @@ public class BookService {
         Book book = bookRepository.findById(bookId)
             .orElseThrow(() -> new EntityNotFoundException(Book.class, bookId));
 
-        if (!book.isRented()) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "대여되지 않은 책입니다.");
-        }
+        book.toReturn();
 
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException(User.class, userId));
 
         UserRental userRental = userRentalRepository.findByUserIdAndBookId(userId, bookId)
             .orElseThrow(
-                () -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "해당 유저가 대여한 책이 아닙니다."));
+                () -> new NotUserRentedBookException("해당 유저가 대여한 책이 아닙니다."));
 
-        book.toReturn();
 
         userRentalRepository.delete(userRental);
 
