@@ -61,3 +61,5 @@ src/main/resources/application.yml
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+/frontend/library-management/node_modules/
