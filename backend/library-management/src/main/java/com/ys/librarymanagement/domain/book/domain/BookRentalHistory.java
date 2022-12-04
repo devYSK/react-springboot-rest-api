@@ -1,7 +1,6 @@
-package com.ys.librarymanagement.domain.book_rental_history;
+package com.ys.librarymanagement.domain.book.domain;
 
 import com.ys.librarymanagement.common.base.AbstractTimeColumn;
-import com.ys.librarymanagement.domain.book.domain.Book;
 import com.ys.librarymanagement.domain.user.domain.User;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
