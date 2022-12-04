@@ -1,8 +1,7 @@
-package com.ys.librarymanagement.domain.user_rental_list;
+package com.ys.librarymanagement.domain.user.domain;
 
 import com.ys.librarymanagement.common.base.AbstractTimeColumn;
 import com.ys.librarymanagement.domain.book.domain.Book;
-import com.ys.librarymanagement.domain.user.domain.User;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,8 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {

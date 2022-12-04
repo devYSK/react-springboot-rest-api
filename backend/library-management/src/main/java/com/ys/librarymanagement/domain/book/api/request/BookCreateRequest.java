@@ -4,14 +4,16 @@ import com.ys.librarymanagement.domain.book.domain.BookType;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
+@NoArgsConstructor
 public class BookCreateRequest {
 
-    private final String bookName;
+    private String bookName;
 
-    private final BookType bookType;
+    private BookType bookType;
 
 }
