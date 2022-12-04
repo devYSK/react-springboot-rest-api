@@ -9,13 +9,13 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
 
-    private final LocalDateTime timeStamp;
+    private LocalDateTime timeStamp;
 
-    private final int status;
+    private int status;
 
-    private final String message;
+    private String message;
 
-    private final String requestUrl;
+    private String requestUrl;
 
     @Builder
     public ErrorResponse(LocalDateTime timeStamp, int status, String message,
@@ -26,4 +26,7 @@ public class ErrorResponse {
         this.requestUrl = requestUrl;
     }
 
+    public void setRequestUrl(String requestUrl) {
+        this.requestUrl = requestUrl;
+    }
 }

@@ -4,9 +4,13 @@ import com.ys.librarymanagement.common.response.ErrorResponse;
 import com.ys.librarymanagement.domain.book.api.request.NotUserRentedBookException;
 import com.ys.librarymanagement.domain.book.exception.AlreadyRentedBookException;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -47,6 +51,15 @@ public class RestGlobalExceptionHandler {
             .message(e.getMessage())
             .requestUrl(request.getRequestURI())
             .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> defaultHandle(MethodArgumentNotValidException e, HttpServletRequest request) {
+
+        ErrorResponse errorResponse = makeErrorResponseWithBindingResult(e.getBindingResult());
+        errorResponse.setRequestUrl(request.getRequestURI());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -110,6 +123,37 @@ public class RestGlobalExceptionHandler {
             .build();
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
+    private ErrorResponse makeErrorResponseWithBindingResult(BindingResult bindingResult) {
+        String code;
+
+        System.out.println("CommonControllerAdvice.makeErrorResponseWithBindingResult");
+
+        if (bindingResult.getFieldError() == null) {
+            code = bindingResult.getFieldErrors().toString();
+        } else {
+            code = Objects.requireNonNull(bindingResult.getFieldError()).getCode();
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        for (FieldError fieldError : bindingResult.getFieldErrors()) {
+            builder.append("[");
+            builder.append(fieldError.getField());
+            builder.append("] - ");
+            builder.append(fieldError.getDefaultMessage());
+            builder.append(" . input value : [");
+            builder.append(fieldError.getRejectedValue());
+            builder.append("]. ");
+        }
+
+        return ErrorResponse.builder()
+            .timeStamp(LocalDateTime.now())
+            .message(builder.toString())
+            .status(HttpStatus.BAD_REQUEST.value())
+            .build();
     }
 
 }
