@@ -64,7 +64,7 @@ export function UserCreateView() {
       <div className="fir_box content_box">
         <div className="content">
           <img src="img/users.png"/>
-          <p className="title">사용자 등록</p>
+          <p className="title">유저 등록</p>
           <div className="input_box">
             <p>이름</p>
             <input type="text" id="small-input" onChange={onChangeUser} name="name"/>
