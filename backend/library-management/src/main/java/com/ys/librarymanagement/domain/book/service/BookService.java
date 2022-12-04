@@ -10,13 +10,13 @@ import com.ys.librarymanagement.domain.book.domain.Book;
 import com.ys.librarymanagement.domain.book.exception.AlreadyRentedBookException;
 import com.ys.librarymanagement.domain.book.exception.DuplicateBookException;
 import com.ys.librarymanagement.domain.book.repository.BookRepository;
-import com.ys.librarymanagement.domain.book_rental_history.BookRentalHistory;
-import com.ys.librarymanagement.domain.book_rental_history.BookRentalHistoryRepository;
-import com.ys.librarymanagement.domain.book_rental_history.RentalStatus;
+import com.ys.librarymanagement.domain.book.domain.BookRentalHistory;
+import com.ys.librarymanagement.domain.book.repository.BookRentalHistoryRepository;
+import com.ys.librarymanagement.domain.book.domain.RentalStatus;
 import com.ys.librarymanagement.domain.user.domain.User;
 import com.ys.librarymanagement.domain.user.repository.UserRepository;
-import com.ys.librarymanagement.domain.user_rental_list.UserRental;
-import com.ys.librarymanagement.domain.user_rental_list.UserRentalRepository;
+import com.ys.librarymanagement.domain.user.domain.UserRental;
+import com.ys.librarymanagement.domain.user.repository.UserRentalRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -104,4 +104,51 @@ public class BookService {
 
         bookRentalHistoryRepository.save(bookRentalHistory);
     }
+
+    @Transactional
+    public BookRentalResponse rentalBook(String email, String bookName) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException(User.class, email));
+
+        Book book = bookRepository.findByName(bookName)
+            .orElseThrow(() -> new EntityNotFoundException(Book.class, bookName));
+
+        if (book.isRented()) {
+            throw new AlreadyRentedBookException("이미 대여된 책입니다.");
+        }
+
+        book.toRental();
+
+        UserRental userRental = UserRental.create(book, user);
+
+        userRentalRepository.save(userRental);
+
+        BookRentalHistory bookRentalHistory = BookRentalHistory.create(user, book, RentalStatus.RENTED);
+
+        return new BookRentalResponse(bookRentalHistoryRepository.save(bookRentalHistory).getId());
+    }
+
+    @Transactional
+    public void returnBook(String email, String bookName) {
+        Book book = bookRepository.findByName(bookName)
+            .orElseThrow(() -> new EntityNotFoundException(Book.class, bookName));
+
+        book.toReturn();
+
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException(User.class, email));
+
+        UserRental userRental = userRentalRepository.findByUserIdAndBookId(user.getId(), book.getId())
+            .orElseThrow(
+                () -> new NotUserRentedBookException("해당 유저가 대여한 책이 아닙니다."));
+
+
+        userRentalRepository.delete(userRental);
+
+        BookRentalHistory bookRentalHistory = BookRentalHistory.create(user, book,
+            RentalStatus.RETURNED);
+
+        bookRentalHistoryRepository.save(bookRentalHistory);
+    }
+
 }

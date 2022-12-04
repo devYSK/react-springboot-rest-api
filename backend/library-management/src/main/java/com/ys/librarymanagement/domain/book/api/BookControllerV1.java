@@ -1,13 +1,16 @@
 package com.ys.librarymanagement.domain.book.api;
 
 import com.ys.librarymanagement.domain.book.api.request.BookCreateRequest;
+import com.ys.librarymanagement.domain.book.api.request.BookNameReturnRequest;
 import com.ys.librarymanagement.domain.book.api.request.BookRentalRequest;
 import com.ys.librarymanagement.domain.book.api.request.BookReturnRequest;
+import com.ys.librarymanagement.domain.book.api.request.BookNameRentalRequest;
 import com.ys.librarymanagement.domain.book.api.response.BookCreateResponse;
 import com.ys.librarymanagement.domain.book.api.response.BookRentalResponse;
 import com.ys.librarymanagement.domain.book.api.response.BookResponse;
 import com.ys.librarymanagement.domain.book.service.BookService;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,5 +57,19 @@ public class BookControllerV1 {
 
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping("/rental")
+    public ResponseEntity<BookRentalResponse> toRentalBook(@RequestBody @Valid BookNameRentalRequest request) {
+
+        return ResponseEntity.ok(bookService.rentalBook(request.getEmail(), request.getBookName()));
+    }
+
+    @PatchMapping("/return")
+    public ResponseEntity<Void> toRentalBook(@RequestBody @Valid BookNameReturnRequest request) {
+        bookService.returnBook(request.getEmail(), request.getBookName());
+
+        return ResponseEntity.ok().build();
+    }
+
 
 }

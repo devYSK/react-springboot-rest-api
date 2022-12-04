@@ -1,4 +1,4 @@
-package com.ys.librarymanagement.domain.book_rental_history;
+package com.ys.librarymanagement.domain.book.domain;
 
 public enum RentalStatus {
     RENTED,

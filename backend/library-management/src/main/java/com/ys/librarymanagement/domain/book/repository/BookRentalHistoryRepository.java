@@ -1,5 +1,6 @@
-package com.ys.librarymanagement.domain.book_rental_history;
+package com.ys.librarymanagement.domain.book.repository;
 
+import com.ys.librarymanagement.domain.book.domain.BookRentalHistory;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
